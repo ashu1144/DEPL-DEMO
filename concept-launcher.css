@@ -1,0 +1,638 @@
+/* =====================================================
+   CONCEPT C: "LAUNCHER"
+   Apps as large icons on a navy home screen.
+   Loads after style.css and reuses its tokens, icons,
+   header and popovers. New classes use "lx-". No JS.
+===================================================== */
+
+
+/* =====================================================
+   STAGE: one navy home screen under the header
+===================================================== */
+
+.lx-stage {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    flex: 1;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 24px 48px;
+    color: #fff;
+    background:
+        radial-gradient(60% 50% at 50% 0%, rgba(0, 128, 188, .45), transparent 70%),
+        radial-gradient(40% 45% at 8% 92%, rgba(26, 166, 44, .14), transparent 70%),
+        radial-gradient(40% 45% at 92% 88%, rgba(227, 0, 22, .1), transparent 70%),
+        linear-gradient(180deg, #042a66 0%, #031f4f 100%);
+}
+
+body:has(#dpThemeSwitch:checked) .lx-stage {
+    background:
+        radial-gradient(60% 50% at 50% 0%, rgba(0, 128, 188, .3), transparent 70%),
+        radial-gradient(40% 45% at 8% 92%, rgba(26, 166, 44, .1), transparent 70%),
+        radial-gradient(40% 45% at 92% 88%, rgba(227, 0, 22, .08), transparent 70%),
+        linear-gradient(180deg, #071a3a 0%, #050f22 100%);
+}
+
+/* the fibre network fills the stage and fades out in the middle,
+   where the text and icons sit */
+
+.lx-stage .lx-network {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse 55% 50% at 50% 48%, transparent 32%, #000 82%);
+    mask-image: radial-gradient(ellipse 55% 50% at 50% 48%, transparent 32%, #000 82%);
+}
+
+/* The drawing is scaled ~3.5x to fill the stage. Strokes use
+   non-scaling-stroke, so the widths below are real screen pixels. */
+
+
+/* FAR NETWORK: a second, bigger, fainter copy behind, for depth */
+
+.lx-far {
+    opacity: .55;
+    animation: lx-drift-far 60s ease-in-out infinite alternate;
+}
+
+.lx-far use {
+    fill: none;
+    stroke: rgba(127, 211, 255, .12);
+    stroke-width: 1px;
+}
+
+
+/* NEAR NETWORK drifts very slowly, so the scene feels alive */
+
+.lx-drift {
+    animation: lx-drift 36s ease-in-out infinite alternate;
+}
+
+
+/* FIBRES: a soft blue glow under a fine bright core */
+
+.lx-fibre-glow {
+    fill: none;
+    stroke: rgba(0, 160, 230, .2);
+    stroke-width: 7px;
+    filter: url(#lxSoft);
+}
+
+.lx-fibre-core {
+    fill: none;
+    stroke: rgba(190, 230, 255, .3);
+    stroke-width: 1.1px;
+}
+
+
+/* COMETS: light travelling through the fibre.
+   Three strokes on the same path (faint tail, body, bright head)
+   whose front ends line up, animated together. Path length is 100;
+   each pattern repeats every 140, so there is a pause between runs. */
+
+.lx-comet {
+    --c: #7fd3ff;
+    --head: #eaf8ff;
+}
+
+.lx-comet.is-green { --c: #3ddc6a; --head: #ecfff1; }
+.lx-comet.is-white { --c: #cfe9ff; --head: #ffffff; }
+
+.lx-comet use {
+    fill: none;
+    stroke: var(--c);
+    stroke-linecap: round;
+    animation: lx-comet var(--d, 6s) linear var(--delay, 0s) infinite;
+}
+
+.lx-comet .t { stroke-width: 2.4px; stroke-dasharray: 30 110; opacity: .28; animation-name: lx-comet-t; }
+.lx-comet .m { stroke-width: 2.6px; stroke-dasharray: 14 126; opacity: .65; animation-name: lx-comet-m; }
+.lx-comet .h { stroke-width: 3.8px; stroke-dasharray: 4 136;  stroke: var(--head); animation-name: lx-comet-h; }
+
+
+/* HUBS: logo-colour junctions with a steady glow and two ripples */
+
+.lx-hub .glow {
+    fill: var(--hub);
+    opacity: .4;
+}
+
+.lx-hub .core {
+    fill: var(--hub);
+    stroke: rgba(255, 255, 255, .9);
+    stroke-width: 1.4px;
+    vector-effect: non-scaling-stroke;
+}
+
+.lx-hub .ring {
+    fill: none;
+    stroke: var(--hub);
+    stroke-width: 1.2px;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: lx-ripple 3.2s ease-out infinite;
+}
+
+.lx-hub .ring.two          { animation-delay: 1.6s; }
+.lx-hub.is-blue .ring      { animation-delay: .6s; }
+.lx-hub.is-blue .ring.two  { animation-delay: 2.2s; }
+.lx-hub.is-green .ring     { animation-delay: 1.1s; }
+.lx-hub.is-green .ring.two { animation-delay: 2.7s; }
+
+
+/* NODES: junction points that gently twinkle */
+
+.lx-nodes circle {
+    fill: #042a66;
+    stroke: rgba(160, 220, 255, .85);
+    stroke-width: 1.2px;
+    animation: lx-twinkle 3s ease-in-out var(--t, 0s) infinite;
+}
+
+body:has(#dpThemeSwitch:checked) .lx-nodes circle {
+    fill: #071a3a;
+}
+
+
+/* PARTICLES: faint specks of data floating upward */
+
+.lx-particles circle {
+    fill: #bfe6ff;
+    opacity: 0;
+    animation: lx-rise var(--dur, 16s) linear var(--p, 0s) infinite;
+}
+
+
+/* one keyframe set per layer, so the three front ends stay lined up
+   (each starts at its own dash length and travels 140) */
+
+@keyframes lx-comet-t { from { stroke-dashoffset: 30; } to { stroke-dashoffset: -110; } }
+@keyframes lx-comet-m { from { stroke-dashoffset: 14; } to { stroke-dashoffset: -126; } }
+@keyframes lx-comet-h { from { stroke-dashoffset: 4;  } to { stroke-dashoffset: -136; } }
+
+@keyframes lx-ripple {
+    from { transform: scale(1); opacity: .9; }
+    to   { transform: scale(5); opacity: 0; }
+}
+
+@keyframes lx-twinkle {
+    50% { opacity: .35; }
+}
+
+@keyframes lx-rise {
+    0%   { transform: translateY(0);      opacity: 0; }
+    15%  { opacity: .8; }
+    85%  { opacity: .45; }
+    100% { transform: translateY(-150px); opacity: 0; }
+}
+
+@keyframes lx-drift {
+    to { transform: translate(-5px, 3px); }
+}
+
+@keyframes lx-drift-far {
+    to { transform: translate(9px, -4px); }
+}
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+.lx-intro {
+    max-width: 760px;
+    text-align: center;
+}
+
+.lx-stage .lx-greeting {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9fd4f5;
+}
+
+.lx-stage h1 {
+    font-family: var(--dp-font-heading);
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    color: #fff;
+}
+
+.lx-stage .lx-sub {
+    margin-top: 12px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, .72);
+}
+
+
+/* =====================================================
+   APPS AS ICONS
+   Accent colours come from style.css (.finance etc.).
+===================================================== */
+
+.lx-apps {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(7, 112px);
+    gap: 30px 22px;
+    justify-content: center;
+}
+
+.lx-app {
+    --lx-accent: var(--dp-accent, #0072a8);
+    --lx-rgb: var(--dp-accent-rgb, 0, 128, 188);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lx-open {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-decoration: none;
+    outline: none;
+}
+
+/* the app icon: a white rounded tile with the app's custom DEPL
+   symbol in its own colour (symbols: see "DEPL ICON SET" below) */
+
+.lx-icon {
+    position: relative;
+    width: 84px;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 26px;
+    color: var(--lx-accent);
+    background: #fff;
+    box-shadow:
+        inset 0 -3px 0 rgba(4, 42, 102, .06),
+        0 16px 30px -12px rgba(var(--lx-rgb), .85);
+    transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease;
+}
+
+.lx-icon .dx {
+    width: 46px;
+    height: 46px;
+}
+
+.lx-app:hover .lx-icon,
+.lx-open:focus-visible .lx-icon {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow:
+        inset 0 -3px 0 rgba(4, 42, 102, .06),
+        0 0 0 6px rgba(255, 255, 255, .08),
+        0 24px 42px -12px rgba(var(--lx-rgb), 1);
+}
+
+.lx-open:focus-visible .lx-icon {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+}
+
+/* "live" badge on the corner of the icon */
+
+.lx-live {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 15px;
+    height: 15px;
+    border: 3px solid #042a66;
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+body:has(#dpThemeSwitch:checked) .lx-live {
+    border-color: #071a3a;
+}
+
+.lx-name {
+    max-width: 112px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+    color: rgba(255, 255, 255, .92);
+}
+
+
+/* PIN: small round button on the icon's corner */
+
+.lx-pin {
+    position: absolute;
+    z-index: 3;
+    top: -8px;
+    left: 6px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #042a66;
+    color: #fff;
+    font-size: 13px;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 4px 10px rgba(0, 0, 0, .3);
+    opacity: 0;
+    transform: scale(.7);
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+.lx-app:hover .lx-pin,
+.lx-pin:focus-visible {
+    opacity: 1;
+    transform: none;
+}
+
+.lx-app.is-pinned .lx-pin {
+    opacity: 1;
+    transform: none;
+    background: var(--lx-accent);
+    color: #fff;
+    box-shadow: 0 0 0 3px #042a66, 0 4px 10px rgba(0, 0, 0, .3);
+}
+
+@media (hover: none) {
+    .lx-pin { opacity: .85; transform: none; }
+}
+
+
+/* TOOLTIP: description + status, on hover or keyboard focus */
+
+.lx-tip {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 14px);
+    left: 50%;
+    width: 232px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--dp-surface);
+    color: var(--dp-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+    text-align: left;
+    box-shadow: var(--dp-shadow-pop);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(var(--lx-x, -50%), 6px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.lx-tip::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: var(--lx-arrow, 50%);
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    background: var(--dp-surface);
+    transform: rotate(45deg);
+}
+
+.lx-app:hover .lx-tip,
+.lx-app:focus-within .lx-tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(var(--lx-x, -50%), 0);
+}
+
+.lx-tip strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--dp-heading);
+}
+
+.lx-tip em {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-style: normal;
+}
+
+.lx-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dp-brand-green);
+}
+
+
+/* =====================================================
+   DOCK: recently opened apps
+===================================================== */
+
+.lx-dock {
+    margin-top: 56px;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 10px 8px 16px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .07);
+    backdrop-filter: blur(10px);
+}
+
+.lx-dock-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 6px;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, .62);
+}
+
+.lx-dock-label .dp-icon {
+    font-size: 14px;
+}
+
+.lx-dock-app {
+    --lx-accent: var(--dp-accent, #0072a8);
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 12px 5px 5px;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color .15s ease;
+}
+
+.lx-dock-app:hover {
+    background: rgba(255, 255, 255, .1);
+}
+
+.lx-mini {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    color: var(--lx-accent);
+    background: #fff;
+}
+
+.lx-mini .dx {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* =====================================================
+   ENTRANCE: text rises, then the icons pop in one by one
+===================================================== */
+
+@keyframes lx-pop {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(.85);
+    }
+}
+
+.lx-intro > * {
+    animation: dp-rise .6s cubic-bezier(.2, .8, .2, 1) backwards;
+}
+
+.lx-intro > :nth-child(2) { animation-delay: .06s; }
+.lx-intro > :nth-child(3) { animation-delay: .12s; }
+.lx-intro > :nth-child(4) { animation-delay: .18s; }
+
+.lx-app {
+    animation: lx-pop .5s cubic-bezier(.2, .8, .2, 1.2) var(--lx-delay, .3s) backwards;
+}
+
+.lx-app:nth-child(1) { --lx-delay: .3s; }
+.lx-app:nth-child(2) { --lx-delay: .36s; }
+.lx-app:nth-child(3) { --lx-delay: .42s; }
+.lx-app:nth-child(4) { --lx-delay: .48s; }
+.lx-app:nth-child(5) { --lx-delay: .54s; }
+.lx-app:nth-child(6) { --lx-delay: .6s; }
+.lx-app:nth-child(7) { --lx-delay: .66s; }
+.lx-app:nth-child(n+8) { --lx-delay: .72s; }
+
+.lx-dock {
+    animation: dp-rise .6s cubic-bezier(.2, .8, .2, 1) .8s backwards;
+}
+
+
+/* =====================================================
+   TABLET: 4 icons per row
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .lx-apps {
+        grid-template-columns: repeat(4, 112px);
+    }
+}
+
+
+/* =====================================================
+   MOBILE: 3 icons per row, like a phone home screen
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .lx-stage {
+        min-height: 0;
+        justify-content: flex-start;
+        padding: 36px 16px 40px;
+    }
+
+    .lx-dock-label {
+        display: none;
+    }
+
+    .lx-stage h1 {
+        font-size: 27px;
+    }
+
+    .lx-stage .lx-sub {
+        font-size: 14.5px;
+    }
+
+    .lx-apps {
+        width: 100%;
+        margin-top: 36px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 26px 8px;
+    }
+
+    .lx-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 21px;
+    }
+
+    .lx-icon .dx {
+        width: 38px;
+        height: 38px;
+    }
+
+    .lx-name {
+        font-size: 13px;
+    }
+
+    .lx-tip {
+        width: 200px;
+    }
+
+    /* keep tooltips on screen in the outer columns */
+    .lx-app:nth-child(3n+1) .lx-tip { left: 0;    --lx-x: 0%;    --lx-arrow: 20%; }
+    .lx-app:nth-child(3n)   .lx-tip { left: auto; right: 0; --lx-x: 0%; --lx-arrow: 80%; }
+
+    .lx-dock {
+        margin-top: 40px;
+    }
+}
+
+/* =====================================================
+   DEPL ICON SET (custom, drawn for DEPL's applications)
+   Solid two-tone symbols on a 48 x 48 grid, embedded as
+   CSS masks so they take the tile's colour.
+   Class = "dx dx-" + the app's ID (PORTAL_APPS.APP_ID).
+===================================================== */
+
+.dx {
+    display: inline-block;
+    flex: none;
+    background-color: currentColor;
+    -webkit-mask: var(--dx-icon) center / contain no-repeat;
+    mask: var(--dx-icon) center / contain no-repeat;
+}
+
+.dx-finance { --dx-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3Cmask id='m'%3E%3Crect width='48' height='48' fill='%23fff'/%3E%3Cpath d='M26 13.5H36M26 17.5H36M29 13.5c5.5 0 5.5 8.5 0 8.5h-2l7 5.5' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/mask%3E%3C/defs%3E%3Cg fill='%23fff' fill-opacity='.42'%3E%3Crect x='5' y='24' width='22' height='6' rx='3'/%3E%3Crect x='5' y='32' width='22' height='6' rx='3'/%3E%3Crect x='5' y='40' width='22' height='6' rx='3'/%3E%3C/g%3E%3Ccircle cx='31' cy='19' r='12' fill='%23fff' mask='url(%23m)'/%3E%3C/svg%3E"); }
+.dx-projects { --dx-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cg fill='%23fff' fill-opacity='.42'%3E%3Crect x='5' y='11' width='26' height='7' rx='3.5'/%3E%3Crect x='11' y='22.5' width='28' height='7' rx='3.5'/%3E%3C/g%3E%3Cg fill='%23fff'%3E%3Crect x='5' y='11' width='18' height='7' rx='3.5'/%3E%3Crect x='11' y='22.5' width='13' height='7' rx='3.5'/%3E%3Crect x='5' y='34' width='20' height='7' rx='3.5'/%3E%3Crect x='36' y='3' width='2.6' height='17' rx='1.3'/%3E%3Cpath d='M38.6 3.5H46l-2.2 3.4 2.2 3.4h-7.4z'/%3E%3C/g%3E%3C/svg%3E"); }
+.dx-order-book { --dx-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3Cmask id='m'%3E%3Crect width='48' height='48' fill='%23fff'/%3E%3Cg fill='none' stroke='%23000' stroke-linecap='round'%3E%3Cpath d='M14 23H29M14 29H29M14 35H23' stroke-width='2.6'/%3E%3Cpath d='M11 9V44' stroke-width='1.6'/%3E%3C/g%3E%3Cpath d='M24 9v8.5l2.75-2 2.75 2V9z' fill='%23000'/%3E%3C/mask%3E%3C/defs%3E%3Crect x='13' y='4' width='28' height='35' rx='4' fill='%23fff' fill-opacity='.42'/%3E%3Crect x='7' y='9' width='28' height='35' rx='4' fill='%23fff' mask='url(%23m)'/%3E%3C/svg%3E"); }
+.dx-opportunities { --dx-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cg fill='%23fff' stroke='%23fff' stroke-width='3' stroke-linejoin='round'%3E%3Cg opacity='.42'%3E%3Cpath d='M7 8H41L37 16H11Z'/%3E%3Cpath d='M17.5 32H30.5L28 38.5H20Z'/%3E%3C/g%3E%3Cpath d='M12.5 20H35.5L32 28H16Z'/%3E%3C/g%3E%3Ccircle cx='24' cy='44' r='3' fill='%23fff'/%3E%3C/svg%3E"); }
+.dx-enterprise { --dx-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M7 31A17 17 0 0 1 41 31H34A10 10 0 0 0 14 31Z' fill='%23fff' fill-opacity='.42'/%3E%3Cg fill='%23fff'%3E%3Cpath d='M7 31A17 17 0 0 1 29.81 15.02L27.42 21.6A10 10 0 0 0 14 31Z'/%3E%3Ccircle cx='24' cy='31' r='4'/%3E%3Crect x='7' y='38' width='16' height='6' rx='3'/%3E%3C/g%3E%3Cpath d='M24 31L33.5 20' stroke='%23fff' stroke-width='3.4' stroke-linecap='round'/%3E%3Crect x='25' y='38' width='16' height='6' rx='3' fill='%23fff' fill-opacity='.42'/%3E%3C/svg%3E"); }
+.dx-archive { --dx-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cg fill='%23fff' fill-opacity='.42'%3E%3Crect x='12' y='4' width='11' height='10' rx='2'/%3E%3Crect x='25' y='2' width='11' height='12' rx='2'/%3E%3Crect x='8' y='22' width='32' height='22' rx='4'/%3E%3C/g%3E%3Cg fill='%23fff'%3E%3Crect x='5' y='12' width='38' height='9' rx='3'/%3E%3Crect x='18' y='28' width='12' height='4.5' rx='2.25'/%3E%3C/g%3E%3C/svg%3E"); }
+.dx-reports { --dx-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='6' y='5' width='27' height='38' rx='4' fill='%23fff' fill-opacity='.42'/%3E%3Cg fill='%23fff'%3E%3Crect x='11' y='11' width='14' height='3.2' rx='1.6'/%3E%3Crect x='11' y='17.5' width='9' height='3.2' rx='1.6'/%3E%3Cpath d='M30 31V20A11 11 0 1 0 41 31Z'/%3E%3Cpath d='M32.5 28.5V17.5A11 11 0 0 1 43.5 28.5Z'/%3E%3C/g%3E%3C/svg%3E"); }

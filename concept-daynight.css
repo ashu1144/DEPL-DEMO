@@ -1,0 +1,523 @@
+/* =====================================================
+   CONCEPT D: DAY / NIGHT
+   Loads last, after style.css, concept-launcher.css and
+   concept-launcher-plus.css. Every rule is scoped to
+   .dn-body, so the other concepts are not affected.
+
+   Light mode (default) = day wallpaper, light header.
+   Dark mode (toggle on) = night wallpaper, navy header.
+   No JavaScript.
+===================================================== */
+
+
+/* =====================================================
+   WALLPAPER
+   A soft wash on the left keeps the headline readable;
+   the right side shows the photo as it is.
+===================================================== */
+
+.dn-body .lx-stage {
+    background: #dfeaf6;
+}
+
+.dn-body .lx-photo {
+    inset: 0;
+    width: auto;
+    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+    background:
+        linear-gradient(to right,
+            rgba(244, 248, 253, .78) 0%,
+            rgba(244, 248, 253, .5) 30%,
+            rgba(244, 248, 253, 0) 58%),
+        url("assets/img/city-day.jpg") center / cover no-repeat;
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-stage {
+    background: #050b1c;
+}
+
+/* keep the day photo as the base layer in dark mode too (a rule in
+   concept-launcher-plus.css would otherwise swap in the old photo) */
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-photo {
+    background:
+        linear-gradient(to right,
+            rgba(244, 248, 253, .78) 0%,
+            rgba(244, 248, 253, .5) 30%,
+            rgba(244, 248, 253, 0) 58%),
+        url("assets/img/city-day.jpg") center / cover no-repeat;
+}
+
+/* the night wallpaper sits on top of the day one and fades in,
+   so switching the theme cross-fades instead of jumping */
+
+.dn-body .lx-photo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to right,
+            rgba(3, 9, 26, .62) 0%,
+            rgba(3, 9, 26, .32) 32%,
+            rgba(3, 9, 26, 0) 60%),
+        url("assets/img/city-night.jpg") center / cover no-repeat;
+    opacity: 0;
+    transition: opacity .8s ease;
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-photo::before {
+    opacity: 1;
+}
+
+/* soft haze behind the icon row */
+
+.dn-body .lx-apps::before {
+    background: radial-gradient(ellipse 60% 60% at 50% 50%,
+        rgba(255, 255, 255, .32) 0%,
+        rgba(255, 255, 255, .14) 50%,
+        rgba(255, 255, 255, 0) 100%);
+}
+
+/* the dark haze is a second layer that fades in, like the wallpaper */
+
+.dn-body .lx-apps::before {
+    transition: opacity .8s ease;
+}
+
+.dn-body .lx-apps::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -56px -90px -64px -90px;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%,
+        rgba(3, 9, 26, .45) 0%,
+        rgba(3, 9, 26, .2) 50%,
+        rgba(3, 9, 26, 0) 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .8s ease;
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-apps::before { opacity: 0; }
+.dn-body:has(#dpThemeSwitch:checked) .lx-apps::after  { opacity: 1; }
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+/* the same DEPL navy header in both modes, with a thin blue edge */
+
+.dn-body .dp-topbar,
+.dn-body:has(#dpThemeSwitch:checked) .dp-topbar {
+    color: #fff;
+    background: linear-gradient(90deg, #031f4f 0%, #053178 55%, #0a4592 100%);
+    border-bottom: 1px solid rgba(91, 187, 232, .35);
+    box-shadow: none;
+}
+
+.dn-body .dp-topbar::after {
+    display: none;
+}
+
+/* the toggle shows the current mode: sun by day, moon by night */
+
+.dn-body .dp-theme-toggle .dp-i-moon { display: none; }
+.dn-body .dp-theme-toggle .dp-i-sun  { display: inline-block; }
+
+.dn-body .dp-theme-switch:checked + .dp-theme-toggle .dp-i-moon { display: inline-block; }
+.dn-body .dp-theme-switch:checked + .dp-theme-toggle .dp-i-sun  { display: none; }
+
+
+/* =====================================================
+   HEADLINE
+===================================================== */
+
+.dn-body .lx-intro {
+    text-shadow: 0 1px 18px rgba(255, 255, 255, .55);
+}
+
+.dn-body .lx-stage .lx-greeting {
+    color: #2b3f5f;
+    text-shadow: none;
+}
+
+.dn-body .lx-stage h1 {
+    font-size: 52px;
+    line-height: 1.1;
+    color: #0a2350;
+}
+
+.dn-body .lx-stage .lx-sub {
+    color: #3a4a63;
+}
+
+/* short blue rule under the subtitle */
+
+.dn-body .lx-stage .lx-sub::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 4px;
+    margin-top: 22px;
+    border-radius: 2px;
+    background: #1e7be6;
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-intro {
+    text-shadow: 0 1px 14px rgba(0, 0, 0, .5);
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-stage .lx-greeting { color: #d6e4f5; }
+.dn-body:has(#dpThemeSwitch:checked) .lx-stage h1          { color: #fff; }
+.dn-body:has(#dpThemeSwitch:checked) .lx-stage .lx-sub     { color: rgba(255, 255, 255, .8); }
+.dn-body:has(#dpThemeSwitch:checked) .lx-stage .lx-sub::after { background: #2f8cf0; }
+
+
+/* =====================================================
+   APP ICONS: dark tiles with light symbols
+   (sizes are the final, smallest step from the earlier
+   iterations, merged into one rule set)
+===================================================== */
+
+.dn-body .lx-apps {
+    grid-template-columns: repeat(7, 100px);
+    gap: 22px 18px;
+    margin-top: 56px;
+}
+
+.dn-body .lx-icon {
+    width: 74px;
+    height: 74px;
+    border-radius: 22px;
+    /* dark navy tile: stands out from the light day sky and the night photo */
+    background: linear-gradient(180deg, #16376f 0%, #0a1f47 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .14),
+        inset 0 1px 0 rgba(255, 255, 255, .18),
+        0 4px 8px rgba(5, 20, 50, .35),
+        0 14px 24px -6px rgba(5, 20, 50, .65),
+        0 28px 44px -12px rgba(5, 20, 50, .6);
+}
+
+.dn-body .lx-icon .dx {
+    width: 34px;
+    height: 34px;
+    /* keep each icon's own hue, just lift it toward light so it reads on the dark tile
+       (the .dx mask + background-color: currentColor rules stay untouched) */
+    background-color: currentColor; /* fallback */
+    background-color: color-mix(in srgb, currentColor 70%, #fff);
+    /* more saturation: richer colour, same hue */
+    filter: saturate(5.2) brightness(1.08);
+}
+
+/* hover / keyboard focus: coloured ring, slightly lighter tile */
+
+.dn-body .lx-app:hover .lx-icon,
+.dn-body .lx-open:focus-visible .lx-icon {
+    background: linear-gradient(180deg, #1d4688 0%, #0d2a5c 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .2),
+        0 0 0 3px rgba(var(--lx-rgb), .6),
+        0 6px 12px rgba(5, 20, 50, .4),
+        0 20px 32px -8px rgba(5, 20, 50, .75),
+        0 34px 54px -14px rgba(5, 20, 50, .65);
+}
+
+/* pinned app: bright blue ring and glow, and the same pin icon stays
+   visible on the corner (click it again to unpin) */
+
+.dn-body .lx-app.is-pinned .lx-icon {
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .14),
+        0 0 0 3px #3b93ff,
+        0 0 26px 4px rgba(59, 147, 255, .55),
+        0 14px 24px -6px rgba(5, 20, 50, .65),
+        0 28px 44px -12px rgba(5, 20, 50, .6);
+}
+
+.dn-body .lx-app.is-pinned .lx-pin {
+    opacity: 1;
+    transform: none;
+}
+
+/* app name: no background, dark text lifted off the day photo by a
+   tight white outline plus a soft white halo */
+
+.dn-body .lx-name {
+    max-width: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #061a3d;
+    text-shadow:
+        0 0 1px rgba(255, 255, 255, 1),
+        0 0 2px rgba(255, 255, 255, .95),
+        0 1px 6px rgba(255, 255, 255, .9),
+        0 0 14px rgba(255, 255, 255, .8);
+}
+
+.dn-body .lx-app:hover .lx-name {
+    color: #061a3d;
+}
+
+/* night mode: slightly deeper tile with a lighter edge so it still
+   separates from the dark photo */
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-icon {
+    background: linear-gradient(180deg, #14305f 0%, #081a3c 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .22),
+        inset 0 1px 0 rgba(255, 255, 255, .2),
+        0 4px 8px rgba(0, 0, 0, .5),
+        0 14px 24px -6px rgba(0, 0, 0, .85),
+        0 28px 44px -12px rgba(0, 0, 0, .8);
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-app.is-pinned .lx-icon {
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .22),
+        0 0 0 3px #3b93ff,
+        0 0 26px 4px rgba(59, 147, 255, .55),
+        0 16px 30px -14px rgba(0, 0, 0, .8);
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-name,
+.dn-body:has(#dpThemeSwitch:checked) .lx-app:hover .lx-name {
+    color: #fff;
+    text-shadow:
+        0 0 2px rgba(0, 0, 0, .9),
+        0 1px 3px rgba(0, 0, 0, .85),
+        0 2px 12px rgba(0, 0, 0, .8);
+}
+
+
+/* =====================================================
+   RECENT DOCK: frosted glass, light or dark
+===================================================== */
+
+.dn-body .lx-dock {
+    border-color: rgba(255, 255, 255, .75);
+    background: rgba(255, 255, 255, .62);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 16px 36px -20px rgba(5, 20, 50, .45);
+}
+
+.dn-body .lx-dock-app          { color: #0a2350; }
+.dn-body .lx-dock-app:hover    { background: rgba(10, 35, 80, .06); }
+
+.dn-body .lx-dock-label {
+    color: #2b3f5f;
+    border-right-color: rgba(10, 35, 80, .15);
+}
+
+.dn-body .lx-mini {
+    background: #fff;
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-dock {
+    border-color: rgba(255, 255, 255, .14);
+    background: rgba(8, 16, 36, .55);
+    box-shadow: 0 16px 36px -20px rgba(0, 0, 0, .7);
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-dock-app       { color: #fff; }
+.dn-body:has(#dpThemeSwitch:checked) .lx-dock-app:hover { background: rgba(255, 255, 255, .1); }
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-dock-label {
+    color: rgba(255, 255, 255, .7);
+    border-right-color: rgba(255, 255, 255, .15);
+}
+
+
+/* =====================================================
+   SMALLER SCREENS
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .dn-body .lx-apps {
+        grid-template-columns: repeat(4, 100px);
+    }
+}
+
+@media (max-width: 600px) {
+
+    .dn-body .lx-stage h1 {
+        font-size: 30px;
+    }
+
+    .dn-body .lx-apps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 26px 8px;
+    }
+
+    .dn-body .lx-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 19px;
+    }
+
+    .dn-body .lx-icon .dx {
+        width: 30px;
+        height: 30px;
+    }
+
+    .dn-body .lx-name {
+        font-size: 13px;
+    }
+
+    .dn-body .lx-photo {
+        background-position: center;
+    }
+}
+
+
+/* =====================================================
+   SMOOTH THEME SWITCH: text, dock and page colours fade
+   over the same 0.8s as the wallpaper
+===================================================== */
+
+.dn-body .lx-stage,
+.dn-body .lx-intro,
+.dn-body .lx-stage .lx-greeting,
+.dn-body .lx-stage h1,
+.dn-body .lx-stage .lx-sub,
+.dn-body .lx-dock,
+.dn-body .lx-dock-label,
+.dn-body .dp-footer,
+.dn-body .dp-footer-inner {
+    transition:
+        color .8s ease,
+        background-color .8s ease,
+        border-color .8s ease,
+        box-shadow .8s ease,
+        text-shadow .8s ease;
+}
+
+.dn-body .lx-stage .lx-sub::after {
+    transition: background-color .8s ease;
+}
+
+/* names and dock links also keep their quick hover response */
+
+.dn-body .lx-name {
+    transition: color .8s ease, text-shadow .8s ease;
+}
+
+.dn-body .lx-dock-app {
+    transition: color .8s ease, background-color .15s ease;
+}
+
+/* the page itself (behind the footer) */
+
+.dn-body {
+    transition: background-color .8s ease, color .8s ease;
+}
+
+
+/* =====================================================
+   LIVE ARCS over the wallpaper
+   The SVG uses the photo's own 1600 x 900 grid and the
+   same "cover, centred" fit, so it lines up with the
+   arcs printed in both the day and the night photo.
+===================================================== */
+
+.dn-arcs {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* comets: tail and head share one arc; their front ends stay
+   together because each starts at its own dash length */
+
+.dn-comets use {
+    fill: none;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    animation: var(--d, 6s) linear var(--delay, 0s) infinite;
+}
+
+.dn-comets .t {
+    stroke: #8fd8ff;
+    stroke-width: 2.4px;
+    stroke-dasharray: 18 122;
+    opacity: .45;
+    animation-name: dn-tail;
+}
+
+.dn-comets .h {
+    stroke: #ffffff;
+    stroke-width: 3.6px;
+    stroke-dasharray: 3 137;
+    animation-name: dn-head;
+}
+
+/* nodes: a ring of light spreading out and fading */
+
+.dn-nodes circle {
+    fill: none;
+    stroke: #bfe9ff;
+    stroke-width: 1.6px;
+    vector-effect: non-scaling-stroke;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: dn-ripple 2.8s ease-out var(--t, 0s) infinite;
+}
+
+/* day: softer, whiter light so it suits the bright sky */
+
+.dn-body .dn-comets .t { stroke: #ffffff; opacity: .55; }
+.dn-body .dn-nodes circle { stroke: #ffffff; }
+
+/* night: cooler blue glow */
+
+.dn-body:has(#dpThemeSwitch:checked) .dn-comets .t { stroke: #7fd3ff; opacity: .5; }
+.dn-body:has(#dpThemeSwitch:checked) .dn-nodes circle { stroke: #9fdcff; }
+
+@keyframes dn-tail   { from { stroke-dashoffset: 18; } to { stroke-dashoffset: -122; } }
+@keyframes dn-head   { from { stroke-dashoffset: 4;  } to { stroke-dashoffset: -136; } }
+@keyframes dn-ripple {
+    0%   { transform: scale(.6); opacity: .9; }
+    100% { transform: scale(3.2); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dn-arcs { display: none; }
+}
+
+
+/* =====================================================
+   DATE / TIME CHIP (under the blue line)
+===================================================== */
+
+.dn-body .lx-when {
+    margin-top: 20px;
+    border-color: rgba(10, 35, 80, .14);
+    background: rgba(255, 255, 255, .72);
+    color: #0a2350;
+    text-shadow: none;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition: color .8s ease, background-color .8s ease, border-color .8s ease;
+}
+
+.dn-body .lx-when-sep {
+    background: rgba(10, 35, 80, .25);
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-when {
+    border-color: rgba(255, 255, 255, .18);
+    background: rgba(8, 16, 36, .45);
+    color: #eaf3fc;
+}
+
+.dn-body:has(#dpThemeSwitch:checked) .lx-when-sep {
+    background: rgba(255, 255, 255, .3);
+}

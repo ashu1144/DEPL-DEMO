@@ -1,0 +1,562 @@
+/* =====================================================
+   CONCEPT C+: LAUNCHER, VISUALLY REFINED
+   Loads after style.css and concept-launcher.css and only
+   refines what is already there. No new content. No JS.
+===================================================== */
+
+
+/* =====================================================
+   STAGE: a soft light from above and darker edges,
+   so the eye settles on the centre
+===================================================== */
+
+.lx-stage::before,
+.lx-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.lx-stage::before {
+    background: radial-gradient(38% 34% at 50% 0%, rgba(127, 211, 255, .16), transparent 100%);
+}
+
+.lx-stage::after {
+    background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(2, 12, 32, .5) 100%);
+}
+
+/* the network fades in rather than appearing at once */
+
+.lx-stage .lx-network {
+    animation: lxp-fade 1.6s ease-out backwards;
+}
+
+
+/* =====================================================
+   HEADLINE
+===================================================== */
+
+/* the greeting becomes a quiet, tracked label */
+
+.lx-stage .lx-greeting {
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #e4f3fd;
+    text-shadow: 0 1px 8px rgba(0, 20, 60, .6);
+}
+
+.lx-stage .lx-sub {
+    margin-top: 16px;
+    font-size: 17px;
+    color: rgba(255, 255, 255, .7);
+}
+
+
+/* =====================================================
+   APP ICONS
+===================================================== */
+
+.lx-apps {
+    margin-top: 60px;
+    gap: 34px 26px;
+}
+
+/* tile: a slight top-to-bottom tint, a hairline edge
+   and a crisp highlight, so it reads as a real object */
+
+.lx-icon {
+    border-radius: 28px;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5fb 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(4, 42, 102, .06),
+        inset 0 1px 0 #fff,
+        inset 0 -3px 0 rgba(4, 42, 102, .05),
+        0 18px 30px -16px rgba(0, 0, 0, .55);
+}
+
+/* a soft pool of the app's colour on the "floor" under each icon */
+
+.lx-icon::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    bottom: -16px;
+    width: 64%;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(var(--lx-rgb), .75), transparent);
+    filter: blur(4px);
+    transform: translateX(-50%);
+    transition: width .3s ease, opacity .3s ease, bottom .3s ease;
+}
+
+/* hover: lift, a ring in the app's colour, and the pool spreads */
+
+.lx-app:hover .lx-icon,
+.lx-open:focus-visible .lx-icon {
+    transform: translateY(-8px);
+    box-shadow:
+        inset 0 0 0 1px rgba(4, 42, 102, .06),
+        inset 0 1px 0 #fff,
+        0 0 0 4px rgba(var(--lx-rgb), .45),
+        0 26px 40px -16px rgba(0, 0, 0, .6);
+}
+
+.lx-app:hover .lx-icon::after {
+    bottom: -26px;
+    width: 80%;
+    opacity: .6;
+}
+
+/* press */
+
+.lx-open:active .lx-icon {
+    transform: translateY(-4px) scale(.96);
+    transition-duration: .08s;
+}
+
+/* the symbol itself nudges up slightly on hover */
+
+.lx-icon .dx {
+    transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+}
+
+.lx-app:hover .lx-icon .dx {
+    transform: scale(1.06);
+}
+
+.lx-name {
+    font-size: 14.5px;
+    letter-spacing: .005em;
+    text-shadow: 0 1px 3px rgba(0, 10, 30, .35);
+    transition: color .2s ease;
+}
+
+.lx-app:hover .lx-name {
+    color: #fff;
+}
+
+/* "live" badge: slimmer ring so it sits neatly on the tile corner */
+
+.lx-live {
+    width: 13px;
+    height: 13px;
+    border-width: 2.5px;
+}
+
+
+/* =====================================================
+   DOCK
+===================================================== */
+
+.lx-dock {
+    margin-top: 64px;
+    gap: 4px;
+    padding: 6px 8px 6px 16px;
+    border-color: rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .05);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .06),
+        0 24px 40px -24px rgba(0, 0, 0, .6);
+}
+
+/* a hairline divides the label from the apps */
+
+.lx-dock-label {
+    margin-right: 8px;
+    padding-right: 14px;
+    border-right: 1px solid rgba(255, 255, 255, .14);
+}
+
+.lx-mini {
+    box-shadow: 0 4px 10px -4px rgba(0, 0, 0, .5);
+    transition: transform .2s ease;
+}
+
+.lx-dock-app:hover .lx-mini {
+    transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+@keyframes lxp-fade {
+    from { opacity: 0; }
+}
+
+
+/* =====================================================
+   SMALLER SCREENS
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .lx-stage .lx-sub {
+        font-size: 15px;
+    }
+
+    .lx-apps {
+        margin-top: 40px;
+        gap: 28px 8px;
+    }
+
+    .lx-icon {
+        border-radius: 22px;
+    }
+
+    .lx-dock {
+        margin-top: 44px;
+    }
+
+    .lx-dock-label {
+        display: none;
+    }
+}
+
+
+/* =====================================================
+   LEFT-ALIGNED LAYOUT WITH CITY ILLUSTRATION
+   (after the reference: welcome on the left, glass tower
+   on the right, date/time chip, quote at the bottom)
+===================================================== */
+
+.lx-stage {
+    align-items: stretch;
+    padding: 64px max(24px, calc((100% - 1160px) / 2)) 40px;
+}
+
+.lx-intro {
+    max-width: 560px;
+    text-align: left;
+}
+
+
+/* CITY: fades out to the left and toward the bottom,
+   so the text and the app icons stay clear */
+
+.lx-city {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    width: min(50%, 760px);
+    height: 100%;
+    pointer-events: none;
+    -webkit-mask-image:
+        linear-gradient(to right, transparent 0%, #000 38%),
+        linear-gradient(to bottom, #000 42%, transparent 86%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to right, transparent 0%, #000 38%),
+        linear-gradient(to bottom, #000 42%, transparent 86%);
+    mask-composite: intersect;
+    animation: lxp-fade 1.4s ease-out backwards;
+}
+
+
+/* DATE / TIME CHIP */
+
+.lx-when {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0 0;
+    padding: 9px 16px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .07);
+    color: #e4f3fd;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+}
+
+.lx-when svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    opacity: .8;
+}
+
+.lx-when-sep {
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, .3);
+}
+
+
+/* APPS line up with the text */
+
+.lx-apps {
+    justify-content: start;
+    margin-top: 52px;
+}
+
+
+/* BOTTOM ROW: quote left, recent dock right */
+
+.lx-bottom {
+    margin-top: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+.lx-bottom .lx-dock {
+    margin-top: 0;
+}
+
+
+
+@media (max-width: 1000px) {
+
+    .lx-city {
+        width: 55%;
+        opacity: .7;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .lx-stage {
+        padding: 36px 16px 32px;
+    }
+
+    .lx-city {
+        width: 100%;
+        opacity: .3;
+    }
+
+    .lx-bottom {
+        margin-top: 40px;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* the network clears the area behind the left-aligned text
+   (instead of the centre) */
+
+/* ...and fades out completely toward the right, so no fibre
+   passes over the photo */
+
+.lx-stage .lx-network {
+    -webkit-mask-image:
+        radial-gradient(ellipse 42% 58% at 26% 50%, transparent 40%, #000 92%),
+        linear-gradient(to right, #000 0%, #000 38%, transparent 56%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        radial-gradient(ellipse 42% 58% at 26% 50%, transparent 40%, #000 92%),
+        linear-gradient(to right, #000 0%, #000 38%, transparent 56%);
+    mask-composite: intersect;
+}
+
+.lx-city {
+    width: min(44%, 660px);
+}
+
+@media (max-width: 600px) {
+    .lx-stage .lx-network {
+        -webkit-mask-image: none;
+        mask-image: none;
+        opacity: .5;
+    }
+}
+
+/* =====================================================
+   PHOTO: DEPL's own "OFC Rollout" image on the right.
+   The city panorama spans the whole screen: a navy wash,
+   strongest on the left, keeps the text and icons readable,
+   and the photo shows most clearly on the right.
+   If assets/img/city-network.jpg is missing, nothing shows
+   here and the drawn city underneath remains visible.
+===================================================== */
+
+.lx-photo {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    /* a neutral dark shade only behind the text on the left; the
+       right side keeps the photo's own dusk colours */
+    background:
+        linear-gradient(to right,
+            rgba(6, 12, 28, .78) 0%,
+            rgba(6, 12, 28, .6) 30%,
+            rgba(6, 12, 28, .18) 58%,
+            rgba(6, 12, 28, 0) 80%),
+        linear-gradient(to bottom, transparent 70%, rgba(6, 12, 28, .55) 100%),
+        url("assets/img/city-network.jpg") 70% 55% / cover no-repeat;
+    opacity: .45;   /* the photo recedes; the dark stage shows through */
+    animation: lxp-fade 1.4s ease-out backwards;
+}
+
+body:has(#dpThemeSwitch:checked) .lx-photo {
+    background:
+        linear-gradient(to right,
+            rgba(4, 8, 18, .86) 0%,
+            rgba(4, 8, 18, .7) 30%,
+            rgba(4, 8, 18, .3) 58%,
+            rgba(4, 8, 18, .12) 100%),
+        linear-gradient(to bottom, transparent 65%, rgba(4, 8, 18, .65) 100%),
+        url("assets/img/city-network.jpg") 70% 55% / cover no-repeat;
+}
+
+/* the stage's own blue glow and vignette would tint the photo */
+
+.lx-stage::before,
+.lx-stage::after {
+    display: none;
+}
+
+/* keep the text crisp on the brighter photo */
+
+.lx-intro {
+    text-shadow: 0 1px 12px rgba(0, 0, 0, .45);
+}
+
+/* the drawn city is no longer needed behind the photo */
+
+.lx-city {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .lx-photo {
+        opacity: .35;
+    }
+}
+
+/* =====================================================
+   LESS BLUE: the stage behind the 65% photo is a neutral
+   near-black instead of navy, so no blue shows through
+===================================================== */
+
+.lx-stage,
+body:has(#dpThemeSwitch:checked) .lx-stage {
+    background: #0e1016;
+}
+
+.lx-stage .dp-route path,
+.lx-fibre-core {
+    stroke: rgba(255, 255, 255, .14);
+}
+
+/* =====================================================
+   ICON ROW: a soft dark shade behind the icons so they
+   stand out from the photo (the rest of the photo is
+   unchanged)
+===================================================== */
+
+.lx-apps {
+    position: relative;
+}
+
+.lx-apps::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -56px -90px -64px -90px;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%,
+        rgba(6, 10, 20, .78) 0%,
+        rgba(6, 10, 20, .6) 45%,
+        rgba(6, 10, 20, 0) 100%);
+    pointer-events: none;
+}
+
+.lx-name {
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .8);
+}
+
+/* =====================================================
+   SOFTER TILES: a muted off-white instead of pure white,
+   so the icons sit calmly on the dark photo
+===================================================== */
+
+.lx-icon {
+    background: linear-gradient(180deg, #dfe5ee 0%, #cdd5e1 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .25),
+        inset 0 1px 0 rgba(255, 255, 255, .5),
+        0 18px 30px -16px rgba(0, 0, 0, .6);
+}
+
+.lx-app:hover .lx-icon,
+.lx-open:focus-visible .lx-icon {
+    background: linear-gradient(180deg, #e8edf4 0%, #d6dde8 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .55),
+        0 0 0 4px rgba(var(--lx-rgb), .45),
+        0 26px 40px -16px rgba(0, 0, 0, .6);
+}
+
+.lx-mini {
+    background: #d6dde8;
+}
+
+/* icon row centred on the page */
+
+.lx-apps {
+    justify-content: center;
+}
+
+/* =====================================================
+   LESS WHITE: tiles one step greyer and slightly
+   see-through, so less white shows on the dark photo
+===================================================== */
+
+.lx-icon {
+    background: linear-gradient(180deg, rgba(206, 214, 226, .82) 0%, rgba(182, 193, 209, .78) 100%);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.lx-app:hover .lx-icon,
+.lx-open:focus-visible .lx-icon {
+    background: linear-gradient(180deg, rgba(220, 227, 237, .9) 0%, rgba(198, 208, 222, .86) 100%);
+}
+
+.lx-mini {
+    background: rgba(196, 206, 220, .85);
+}
+
+/* no coloured light under the icons */
+
+.lx-icon::after {
+    display: none;
+}
+
+/* =====================================================
+   BALANCED TILES: solid (not see-through) light grey-
+   white, between the original bright white and the dim
+   translucent grey
+===================================================== */
+
+.lx-icon {
+    background: linear-gradient(180deg, #eef1f6 0%, #dde3ec 100%);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+.lx-app:hover .lx-icon,
+.lx-open:focus-visible .lx-icon {
+    background: linear-gradient(180deg, #f6f8fb 0%, #e6ebf2 100%);
+}
+
+.lx-mini {
+    background: #e6ebf2;
+}

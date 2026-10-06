@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+  <!--
+    CONCEPT D: Day / Night.
+    The Launcher over a real city wallpaper: the day photo in light mode,
+    the night photo in dark mode (switched by the moon/sun toggle).
+    concept-daynight.css loads last and holds everything specific to
+    this concept. Two small scripts: auto theme next to the theme
+    switch (dark mode after 17:30) and pin / unpin after the app icons.
+-->
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>DEPL Enterprise Portal | Dinesh Engineers Limited</title>
+
+    <link rel="icon" href="assets/favicon.jpg" />
+    <meta name="theme-color" content="#053178" />
+
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="concept-launcher.css" />
+    <link rel="stylesheet" href="concept-launcher-plus.css" />
+    <link rel="stylesheet" href="concept-daynight.css" />
+  </head>
+
+  <body class="dp-body lx-body dn-body">
+    <a class="dp dp-skip-link" href="#main">Skip to content</a>
+
+    <!-- =====================================================
+     HEADER (same as the main design)
+===================================================== -->
+
+    <header class="dp dp-topbar" data-unread="2">
+      <div class="dp-brand">
+        <span class="dp-brand-logo" role="img" aria-label="DEPL"></span>
+        <div class="dp-brand-name">
+          <strong>Dinesh Engineers Limited</strong>
+          <span class="dp-divider"></span>
+          <span class="dp-brand-tag">Enterprise Portal</span>
+        </div>
+      </div>
+
+      <div class="dp-top-actions">
+        <input
+          class="dp-theme-switch"
+          type="checkbox"
+          id="dpThemeSwitch"
+          aria-label="Dark mode"
+        />
+        <!-- AUTO THEME: dark from 17:30 to 06:00, light otherwise.
+             Runs right after the switch so the first paint is already
+             correct; re-checks every minute and only flips at the
+             17:30 / 06:00 boundaries, so a manual toggle is kept. -->
+        <script>
+          (function () {
+            var sw = document.getElementById("dpThemeSwitch");
+            function isNight() {
+              var d = new Date();
+              var m = d.getHours() * 60 + d.getMinutes();
+              return m >= 17 * 60 + 30 || m < 6 * 60;
+            }
+            var last = isNight();
+            sw.checked = last;
+            setInterval(function () {
+              var now = isNight();
+              if (now !== last) {
+                sw.checked = now;
+                last = now;
+              }
+            }, 60000);
+          })();
+        </script>
+        <label
+          class="dp-top-icon dp-theme-toggle"
+          for="dpThemeSwitch"
+          title="Switch light / dark mode"
+        >
+          <span class="dp-icon dp-i-moon"></span>
+          <span class="dp-icon dp-i-sun"></span>
+        </label>
+
+        <button
+          class="dp-top-icon"
+          type="button"
+          popovertarget="dpAnnouncements"
+          aria-label="Announcements"
+        >
+          <span class="dp-icon dp-i-bell"></span>
+          <span class="dp-notification-dot"></span>
+        </button>
+
+        <button
+          class="dp-avatar"
+          type="button"
+          popovertarget="dpAccount"
+          aria-label="Account menu"
+        >
+          SA
+        </button>
+      </div>
+
+      <div class="dp dp-menu-panel" id="dpAccount" popover>
+        <div class="dp-menu-header">
+          <strong>SA</strong>
+          <span>Signed in</span>
+        </div>
+        <a class="dp-menu-item" href="#"
+          ><span class="dp-icon dp-i-user"></span>Profile</a
+        >
+        <a class="dp-menu-item" href="#"
+          ><span class="dp-icon dp-i-life-buoy"></span>Help &amp; support</a
+        >
+        <div class="dp-menu-separator"></div>
+        <a class="dp-menu-item" href="#"
+          ><span class="dp-icon dp-i-log-out"></span>Sign out</a
+        >
+      </div>
+
+      <aside
+        class="dp dp-panel"
+        id="dpAnnouncements"
+        popover
+        aria-labelledby="dpAnnouncementsTitle"
+      >
+        <div class="dp-panel-header">
+          <h2 id="dpAnnouncementsTitle">Announcements</h2>
+          <div class="dp-panel-actions">
+            <a class="dp-text-button" href="#"
+              ><span class="dp-icon dp-i-check-check"></span>Mark all read</a
+            >
+            <button
+              class="dp-icon-button"
+              type="button"
+              popovertarget="dpAnnouncements"
+              popovertargetaction="hide"
+              aria-label="Close announcements"
+            >
+              <span class="dp-icon dp-i-x"></span>
+            </button>
+          </div>
+        </div>
+        <ul class="dp-notif-list">
+          <li class="dp-notif-item is-unread">
+            <span class="dp-notif-icon"
+              ><span class="dp-icon dp-i-megaphone"></span
+            ></span>
+            <div class="dp-notif-text">
+              <strong>Welcome to the new Enterprise Portal</strong>
+              <span
+                >All your DEPL applications in one place. Pin the ones you use
+                most to keep them first.</span
+              >
+              <time datetime="2026-09-28">28 Sep</time>
+            </div>
+            <span class="dp-unread-dot" aria-label="Unread"></span>
+          </li>
+          <li class="dp-notif-item is-unread">
+            <span class="dp-notif-icon"
+              ><span class="dp-icon dp-i-megaphone"></span
+            ></span>
+            <div class="dp-notif-text">
+              <strong>More Enterprise Dashboard modules coming</strong>
+              <span
+                >Group balance sheet and P&amp;L are live. Further modules will
+                arrive in the Enterprise Dashboard.</span
+              >
+              <time datetime="2026-09-26">26 Sep</time>
+            </div>
+            <span class="dp-unread-dot" aria-label="Unread"></span>
+          </li>
+          <li class="dp-notif-item">
+            <span class="dp-notif-icon"
+              ><span class="dp-icon dp-i-megaphone"></span
+            ></span>
+            <div class="dp-notif-text">
+              <strong>NetSuite archive is read only</strong>
+              <span
+                >Records from 2010–2026 remain available for reference in
+                Archive.</span
+              >
+              <time datetime="2026-09-24">24 Sep</time>
+            </div>
+          </li>
+        </ul>
+      </aside>
+    </header>
+
+    <!-- =====================================================
+     STAGE: the whole home screen
+===================================================== -->
+
+    <main class="dp lx-stage" id="main">
+      <!-- WALLPAPER: day photo in light mode, night photo in dark mode
+         (assets/img/city-day.jpg and city-night.jpg, set in concept-daynight.css) -->
+
+      <div class="lx-photo" aria-hidden="true"></div>
+
+      <!-- LIVE ARCS: traced over the network arcs printed in the wallpaper
+         (same 1600 x 900 grid as the photo), with light travelling along
+         them and the junction nodes pulsing. Pure SVG + CSS. -->
+
+      <svg
+        class="dn-arcs"
+        viewBox="0 0 1600 900"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        <defs>
+          <path
+            id="dnA1"
+            pathLength="100"
+            d="M28.2 591.6 L36.5 577.6 46 564.1 55.9 550.8 66.4 537.7 77.3 524.9 88.9 512.5 100.7 500.2 111.9 486.8 124.3 474.5 138.4 464.3 153.5 455.5 168 445.8 182.7 436.5 197.6 427.7 213 419.6 228.6 412.2 244.5 405.7 260.5 399.7 276.7 394.4 293 390.1 309.4 386.4 325.8 383.6 342.2 382 358.6 381.7 374.8 382.3 390.8 383.7 406.6 386.2 422.1 389.8 437.3 394.3 452.1 399.9 466.4 406.8 480.4 414.5 493.8 423.3 506.9 433.1 519.3 444.2 531.1 456.5 542.6 469.6 553.5 484.1 563.7 499.9 573.2 516.9"
+          />
+          <path
+            id="dnA2"
+            pathLength="100"
+            d="M427.6 487.3 L435 471.3 444.8 457.3 454.4 444 463.8 431.1 473.7 419.1 484.2 408 495 397.6 506 387.6 517.4 378.3 529.1 369.4 541.1 361 553.8 353.4 566.9 346.6 580.6 340.7 594.5 335.4 608.9 330.9 623.6 327.7 638.6 325.7 653.8 324.3 669 323.6 684.4 323.8 699.7 325.1 715 327 730.3 329.7 745.5 333.1 760.4 337.5 775 343.1 789.3 349.1 803.5 355.5 817.3 362.7 830.6 370.8 843.7 379.1 856.5 388 869 397.2 880.9 407.3 892.1 418.1 902.6 429.5 912.8 441.3 922.4 453.6 931.4 466.4"
+          />
+          <path
+            id="dnA3"
+            pathLength="100"
+            d="M707.4 322.9 L720 313.5 733 304.7 746.5 296.8 760.5 290 774.9 283.8 789.5 278.3 804.3 273.5 819.3 269.2 834.4 265 849.6 261.4 865.1 258.9 880.7 256.6 896.3 254.8 912.1 253.7 927.9 252.9 943.7 253.3 959.5 254.1 975.3 255.7 990.9 258.2 1006.4 261.3 1021.8 264.9 1037 269.1 1051.8 274.4 1066.4 280.3 1080.6 286.8 1094.5 293.9 1107.9 301.9 1120.7 310.6 1133.1 319.9 1145.2 329.5 1156.9 339.7 1167.9 350.5 1178.4 362 1188.3 374 1197.5 386.6 1206.1 399.9 1214 413.7 1220 428.6 1223.7 444.6 1226.6 460.8"
+          />
+          <path
+            id="dnA4"
+            pathLength="100"
+            d="M1196.9 344.3 L1205.5 338.8 1214.3 333.6 1223.5 329.2 1232.7 325.1 1242 321.3 1251.3 317.4 1260.6 313.8 1270 310.5 1279.6 307.9 1289.3 305.8 1299 304 1308.8 302.6 1318.6 301.2 1328.4 300.1 1338.2 299.6 1348 299.7 1357.8 300.6 1367.4 301.9 1377.1 303.3 1386.6 304.9 1396.1 306.9 1405.5 309.3 1414.8 312 1423.9 315.1 1432.9 318.6 1441.8 322.5 1450.4 326.7 1458.7 331.7 1466.8 337 1474.8 342.5 1482.4 348.5 1489.4 355.2 1495.5 363 1500.8 371.4 1507.7 378.2 1516.1 384 1523.9 390.6 1529.9 398.8 1534.6 408.1 1539.1 417.5"
+          />
+          <path
+            id="dnA5"
+            pathLength="100"
+            d="M1118 550 Q1161 492 1232 459 C1290 440 1440 440 1537 572"
+          />
+          <!-- the same arcs run the other way, for traffic in both directions.
+                 Paths were traced from the arc pixels in city-night.jpg -->
+          <path
+            id="dnB2"
+            pathLength="100"
+            d="M931.4 466.4 L922.4 453.6 912.8 441.3 902.6 429.5 892.1 418.1 880.9 407.3 869 397.2 856.5 388 843.7 379.1 830.6 370.8 817.3 362.7 803.5 355.5 789.3 349.1 775 343.1 760.4 337.5 745.5 333.1 730.3 329.7 715 327 699.7 325.1 684.4 323.8 669 323.6 653.8 324.3 638.6 325.7 623.6 327.7 608.9 330.9 594.5 335.4 580.6 340.7 566.9 346.6 553.8 353.4 541.1 361 529.1 369.4 517.4 378.3 506 387.6 495 397.6 484.2 408 473.7 419.1 463.8 431.1 454.4 444 444.8 457.3 435 471.3 427.6 487.3"
+          />
+          <path
+            id="dnB5"
+            pathLength="100"
+            d="M1537 572 C1440 440 1290 440 1232 459 Q1161 492 1118 550"
+          />
+
+          <filter id="dnGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="b" />
+            <feMerge>
+              <feMergeNode in="b" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- comets: faint tail + bright head on the same arc -->
+        <g class="dn-comets" filter="url(#dnGlow)">
+          <g style="--d: 5.5s; --delay: -1s">
+            <use href="#dnA1" class="t" />
+            <use href="#dnA1" class="h" />
+          </g>
+          <g style="--d: 6.5s; --delay: -3.5s">
+            <use href="#dnA2" class="t" />
+            <use href="#dnA2" class="h" />
+          </g>
+          <g style="--d: 7s; --delay: -0.5s">
+            <use href="#dnA3" class="t" />
+            <use href="#dnA3" class="h" />
+          </g>
+          <g style="--d: 5.8s; --delay: -2.6s">
+            <use href="#dnA4" class="t" />
+            <use href="#dnA4" class="h" />
+          </g>
+          <g style="--d: 6.2s; --delay: -4.4s">
+            <use href="#dnA5" class="t" />
+            <use href="#dnA5" class="h" />
+          </g>
+          <g style="--d: 8s; --delay: -6s">
+            <use href="#dnB2" class="t" />
+            <use href="#dnB2" class="h" />
+          </g>
+          <g style="--d: 7.4s; --delay: -1.8s">
+            <use href="#dnB5" class="t" />
+            <use href="#dnB5" class="h" />
+          </g>
+        </g>
+
+        <!-- junction nodes: a soft ripple spreading out from each -->
+        <g class="dn-nodes">
+          <circle cx="132" cy="471" r="6" style="--t: 0s" />
+          <circle cx="481" cy="414" r="7" style="--t: -0.7s" />
+          <circle cx="705" cy="324" r="6" style="--t: -1.4s" />
+          <circle cx="868" cy="398" r="5" style="--t: -2.1s" />
+          <circle cx="1147" cy="331" r="6" style="--t: -0.35s" />
+          <circle cx="1232" cy="459" r="7" style="--t: -1.05s" />
+          <circle cx="1436" cy="321" r="5" style="--t: -1.75s" />
+          <circle cx="1503" cy="532" r="5" style="--t: -2.45s" />
+          <circle cx="1100" cy="526" r="5" style="--t: -2.8s" />
+        </g>
+      </svg>
+
+      <!-- WELCOME -->
+
+      <div class="lx-intro">
+        <p class="lx-greeting">Good evening</p>
+
+        <h1>Welcome to Dinesh Engineers Limited</h1>
+
+        <p class="lx-sub">Working silently to connect your world.</p>
+
+        <!-- APEX: &P1_TODAY. and &P1_TIME. (time the page was loaded) -->
+        <p class="lx-when">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="4.5" width="18" height="16.5" rx="2.5" />
+            <path d="M3 9.5h18M8 2.5v4M16 2.5v4" />
+          </svg>
+          <time datetime="2026-09-28T17:44">Mon, 28 Sep 2026</time>
+          <span class="lx-when-sep" aria-hidden="true"></span>
+          <span>17:44</span>
+        </p>
+      </div>
+
+      <!-- APPLICATIONS as icons
+         Each icon shows its description on hover / keyboard focus. -->
+
+      <nav class="lx-apps" aria-label="Applications">
+        <div class="lx-app finance" id="app-finance">
+          <a class="lx-open" href="#">
+            <span class="lx-icon"><span class="dx dx-finance"></span></span>
+            <span class="lx-name">Finance</span>
+          </a>
+          <a class="lx-pin" href="#" title="Unpin" aria-label="Unpin Finance"
+            ><span class="dp-icon dp-i-pin"></span
+          ></a>
+          <span class="lx-tip" role="tooltip">
+            <strong>Finance</strong>
+            Financial reports, live from Oracle Fusion.
+            <em><span class="lx-dot"></span>Live · Oracle Fusion</em>
+          </span>
+        </div>
+
+        <div class="lx-app projects" id="app-projects">
+          <a class="lx-open" href="#">
+            <span class="lx-icon"><span class="dx dx-projects"></span></span>
+            <span class="lx-name">Projects</span>
+          </a>
+          <a class="lx-pin" href="#" title="Pin" aria-label="Pin Projects"
+            ><span class="dp-icon dp-i-pin"></span
+          ></a>
+          <span class="lx-tip" role="tooltip">
+            <strong>Projects</strong>
+            Project performance tracking: site progress, plan vs actual.
+            <em><span class="lx-dot"></span>Live</em>
+          </span>
+        </div>
+
+        <div class="lx-app order-book" id="app-order-book">
+          <a class="lx-open" href="#">
+            <span class="lx-icon"><span class="dx dx-order-book"></span></span>
+            <span class="lx-name">Order Book</span>
+          </a>
+          <a class="lx-pin" href="#" title="Pin" aria-label="Pin Order Book"
+            ><span class="dp-icon dp-i-pin"></span
+          ></a>
+          <span class="lx-tip" role="tooltip">
+            <strong>Order Book</strong>
+            The de-duplicated sales order book: EPC contracts and IP-IRU orders,
+            one number.
+            <em><span class="lx-dot"></span>Live</em>
+          </span>
+        </div>
+
+        <div class="lx-app opportunities" id="app-opportunities">
+          <a class="lx-open" href="#">
+            <span class="lx-icon"
+              ><span class="dx dx-opportunities"></span
+            ></span>
+            <span class="lx-name">Opportunities</span>
+          </a>
+          <a class="lx-pin" href="#" title="Pin" aria-label="Pin Opportunities"
+            ><span class="dp-icon dp-i-pin"></span
+          ></a>
+          <span class="lx-tip" role="tooltip">
+            <strong>Opportunities</strong>
+            Feasibility requests through to customer PO: pipeline and funnel.
+            <em><span class="lx-dot"></span>Live</em>
+          </span>
+        </div>
+
+        <div class="lx-app enterprise" id="app-enterprise">
+          <a class="lx-open" href="#">
+            <span class="lx-icon"><span class="dx dx-enterprise"></span></span>
+            <span class="lx-name">Enterprise<br />Dashboard</span>
+          </a>
+          <a
+            class="lx-pin"
+            href="#"
+            title="Pin"
+            aria-label="Pin Enterprise Dashboard"
+            ><span class="dp-icon dp-i-pin"></span
+          ></a>
+          <span class="lx-tip" role="tooltip">
+            <strong>Enterprise Dashboard</strong>
+            Group balance sheet and profit &amp; loss, live from Oracle Fusion.
+            <em><span class="lx-dot"></span>Live · Oracle Fusion</em>
+          </span>
+        </div>
+
+        <div class="lx-app archive" id="app-archive">
+          <a class="lx-open" href="#">
+            <span class="lx-icon"><span class="dx dx-archive"></span></span>
+            <span class="lx-name">Archive</span>
+          </a>
+          <a class="lx-pin" href="#" title="Pin" aria-label="Pin Archive"
+            ><span class="dp-icon dp-i-pin"></span
+          ></a>
+          <span class="lx-tip" role="tooltip">
+            <strong>Archive</strong>
+            NetSuite records 2010–2026, read only.
+            <em><span class="lx-dot"></span>Live · NetSuite</em>
+          </span>
+        </div>
+
+        <div class="lx-app reports" id="app-reports">
+          <a class="lx-open" href="#">
+            <span class="lx-icon"><span class="dx dx-reports"></span></span>
+            <span class="lx-name">Reports</span>
+          </a>
+          <a class="lx-pin" href="#" title="Pin" aria-label="Pin Reports"
+            ><span class="dp-icon dp-i-pin"></span
+          ></a>
+          <span class="lx-tip" role="tooltip">
+            <strong>Reports</strong>
+            Standard and scheduled reports from across the business.
+            <em><span class="lx-dot"></span>Live</em>
+          </span>
+        </div>
+      </nav>
+
+      <!-- PIN / UNPIN: one pin icon per app, any number can be pinned.
+           Clicking a pin checks the pinnedIds array for the app's id:
+           present -> remove (unpin), missing -> add (pin).
+           Order: pinned apps first, in the order they were pinned,
+           then the rest in their original order. -->
+      <script>
+        (function () {
+          var nav = document.querySelector(".lx-apps");
+          var apps = Array.from(nav.querySelectorAll(".lx-app"));
+          var originalIds = apps.map(function (app) { return app.id; });
+          var pinnedIds = ["app-finance"];
+
+          function render() {
+            var order = pinnedIds.concat(
+              originalIds.filter(function (id) {
+                return !pinnedIds.includes(id);
+              })
+            );
+
+            order.forEach(function (id) {
+              var app = document.getElementById(id);
+              var pinned = pinnedIds.includes(id);
+              var pin = app.querySelector(".lx-pin");
+              var name = app.querySelector(".lx-tip strong").textContent;
+              app.classList.toggle("is-pinned", pinned);
+              pin.title = pinned ? "Unpin" : "Pin";
+              pin.setAttribute("aria-label", (pinned ? "Unpin " : "Pin ") + name);
+              nav.appendChild(app); // appending in order = re-sorting
+            });
+          }
+
+          function togglePin(id) {
+            if (pinnedIds.includes(id)) {
+              pinnedIds = pinnedIds.filter(function (p) { return p !== id; });
+            } else {
+              pinnedIds.push(id);
+            }
+            // animate the re-order where the browser supports it: a name
+            // per app (only during the transition) slides each icon
+            if (!document.startViewTransition) {
+              render();
+              return;
+            }
+            apps.forEach(function (app) {
+              app.style.viewTransitionName = app.id;
+            });
+            document.startViewTransition(render).finished.finally(function () {
+              apps.forEach(function (app) {
+                app.style.viewTransitionName = "";
+              });
+            });
+          }
+
+          nav.addEventListener("click", function (e) {
+            var pin = e.target.closest(".lx-pin");
+            if (!pin) return;
+            e.preventDefault();
+            togglePin(pin.closest(".lx-app").id);
+          });
+
+          render();
+        })();
+      </script>
+
+      <!-- BOTTOM ROW: quote on the left, recently opened apps on the right -->
+
+      <div class="lx-bottom">
+        <nav class="lx-dock" aria-label="Recently opened">
+          <span class="lx-dock-label"
+            ><span class="dp-icon dp-i-history"></span>Recent</span
+          >
+          <a class="lx-dock-app finance" href="#" title="Opened 2 h ago"
+            ><span class="lx-mini"><span class="dx dx-finance"></span></span
+            >Finance</a
+          >
+          <a class="lx-dock-app projects" href="#" title="Opened yesterday"
+            ><span class="lx-mini"><span class="dx dx-projects"></span></span
+            >Projects</a
+          >
+          <a class="lx-dock-app reports" href="#" title="Opened 3 days ago"
+            ><span class="lx-mini"><span class="dx dx-reports"></span></span
+            >Reports</a
+          >
+        </nav>
+      </div>
+    </main>
+
+    <footer class="dp dp-footer">
+      <div class="dp-footer-inner">
+        <span>© 2026 Dinesh Engineers Limited</span>
+      </div>
+    </footer>
+  </body>
+</html>

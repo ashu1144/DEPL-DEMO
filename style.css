@@ -1,0 +1,1327 @@
+/* =====================================================
+   DEPL ENTERPRISE PORTAL
+   No JavaScript. Every class is prefixed "dp-" and
+   every rule is scoped, so this file can be loaded
+   into Oracle APEX alongside the Universal Theme.
+===================================================== */
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+:root {
+    /* DEPL brand: logo squares + depl.co.in palette */
+    --dp-brand-navy: #053178;
+    --dp-brand-red: #e30016;
+    --dp-brand-green: #1aa62c;
+    --dp-brand-blue: #0080bc;
+
+    --dp-font-heading: Montserrat, "Segoe UI", system-ui, sans-serif;
+    --dp-font-body: Roboto, "Segoe UI", system-ui, Arial, sans-serif;
+
+    --dp-page: #f5f7fa;
+    --dp-surface: #ffffff;
+    --dp-hover: #f1f3f6;
+    --dp-border: #e2e6ec;
+    --dp-border-strong: #cdd4de;
+
+    --dp-heading: #0a2350;
+    --dp-text: #3a4150;
+    --dp-muted: #5f6878;
+    --dp-link: #0072a8;
+    --dp-link-soft: rgba(0, 128, 188, .08);
+
+    --dp-net-line: rgba(0, 128, 188, .22);
+    --dp-shadow-pop: 0 12px 32px -8px rgba(16, 24, 40, .18), 0 2px 6px rgba(16, 24, 40, .06);
+
+    --dp-tint: .09;          /* strength of the per-app tinted tiles */
+    --dp-on-accent: #ffffff; /* icon colour on a solid accent tile  */
+
+    --dp-radius: 6px;
+
+    color-scheme: light;
+}
+
+/* light is the default. Dark applies while the header's theme switch
+   (checkbox #dpThemeSwitch) is ticked; :has() lets it restyle the
+   whole page, so no JavaScript is needed. */
+
+body:has(#dpThemeSwitch:checked) {
+    --dp-page: #0c1017;
+    --dp-surface: #131924;
+    --dp-hover: #1a2130;
+    --dp-border: #232b3a;
+    --dp-border-strong: #334055;
+
+    --dp-heading: #f2f4f7;
+    --dp-text: #cdd3dc;
+    --dp-muted: #8d97a7;
+    --dp-link: #5bbbe8;
+    --dp-link-soft: rgba(0, 128, 188, .16);
+
+    --dp-net-line: rgba(91, 187, 232, .2);
+    --dp-shadow-pop: 0 12px 32px -8px rgba(0, 0, 0, .6), 0 2px 6px rgba(0, 0, 0, .3);
+
+    --dp-tint: .16;
+    --dp-on-accent: #0c1017;
+
+    color-scheme: dark;
+}
+
+
+/* =====================================================
+   BASE (scoped to portal components)
+===================================================== */
+
+.dp-body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-family: var(--dp-font-body);
+    font-size: 14px;
+    color: var(--dp-text);
+    background: var(--dp-page);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dp,
+.dp *,
+.dp *::before,
+.dp *::after {
+    box-sizing: border-box;
+}
+
+.dp :where(h1, h2, h3, p, ul, dl, dd) {
+    margin: 0;
+    padding: 0;
+}
+
+.dp :where(h1, h2, h3),
+.dp-brand-name strong {
+    font-family: var(--dp-font-heading);
+}
+
+.dp :where(button) {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+.dp :focus-visible {
+    outline: 2px solid var(--dp-brand-blue);
+    outline-offset: 2px;
+}
+
+.dp-skip-link {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    z-index: 500;
+    padding: 8px 14px;
+    border-radius: var(--dp-radius);
+    background: var(--dp-surface);
+    color: var(--dp-heading);
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: var(--dp-shadow-pop);
+}
+
+.dp-skip-link:focus {
+    top: 12px;
+}
+
+
+/* =====================================================
+   ICONS
+   Lucide SVGs embedded as CSS masks (see end of file),
+   so they take the colour of the surrounding text.
+===================================================== */
+
+.dp-icon {
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask: var(--dp-icon) center / contain no-repeat;
+    mask: var(--dp-icon) center / contain no-repeat;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.dp-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    color: #fff;
+    background: linear-gradient(90deg, #031f4f 0%, var(--dp-brand-navy) 55%, #0a4592 100%);
+}
+
+/* thin stripe in the logo's colours */
+
+.dp-topbar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        var(--dp-brand-red) 0 33.33%,
+        var(--dp-brand-blue) 33.33% 66.66%,
+        var(--dp-brand-green) 66.66% 100%
+    );
+}
+
+
+/* BRAND */
+
+.dp-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* path is relative to this stylesheet: keep assets/ beside it */
+
+.dp-brand-logo {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: #fff url("assets/depl-mark.png") center / 26px 26px no-repeat;
+}
+
+.dp-brand-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.dp-brand-name strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dp-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255, 255, 255, .3);
+}
+
+.dp-brand-tag {
+    font-size: 13px;
+    color: rgba(255, 255, 255, .7);
+    white-space: nowrap;
+}
+
+
+/* ACTIONS */
+
+.dp-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dp-top-icon {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--dp-radius);
+    background: transparent;
+    color: rgba(255, 255, 255, .85);
+    font-size: 18px;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.dp-top-icon:hover {
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+}
+
+/* THEME SWITCH: a visually hidden checkbox; its <label> is the
+   moon/sun button. Shows the mode you can switch to. */
+
+.dp-theme-switch {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    opacity: 0;
+}
+
+.dp-theme-switch:focus-visible + .dp-theme-toggle {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.dp-theme-toggle {
+    cursor: pointer;
+}
+
+.dp-theme-toggle .dp-i-sun,
+.dp-theme-switch:checked + .dp-theme-toggle .dp-i-moon {
+    display: none;
+}
+
+.dp-theme-switch:checked + .dp-theme-toggle .dp-i-sun {
+    display: inline-block;
+}
+
+.dp-notification-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dp-brand-red);
+    box-shadow: 0 0 0 2px var(--dp-brand-navy);
+}
+
+/* no unread announcements: hide the dot */
+
+.dp-topbar[data-unread="0"] .dp-notification-dot,
+.dp-topbar[data-unread=""] .dp-notification-dot {
+    display: none;
+}
+
+.dp-avatar {
+    width: 32px;
+    height: 32px;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .15);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+.dp-avatar:hover {
+    border-color: rgba(255, 255, 255, .7);
+    background: rgba(255, 255, 255, .25);
+}
+
+
+/* =====================================================
+   ACCOUNT MENU (HTML popover)
+===================================================== */
+
+.dp-menu-panel[popover] {
+    position: fixed;
+    inset: 66px 24px auto auto;
+    margin: 0;
+    min-width: 220px;
+    padding: 6px;
+    border: 1px solid var(--dp-border);
+    border-radius: 8px;
+    background: var(--dp-surface);
+    color: var(--dp-text);
+    box-shadow: var(--dp-shadow-pop);
+}
+
+.dp-menu-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 10px 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--dp-border);
+}
+
+.dp-menu-header strong {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dp-heading);
+}
+
+.dp-menu-header span {
+    font-size: 12px;
+    color: var(--dp-muted);
+}
+
+.dp-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--dp-radius);
+    color: var(--dp-text);
+    font-size: 13.5px;
+    text-decoration: none;
+}
+
+.dp-menu-item:hover {
+    background: var(--dp-hover);
+    color: var(--dp-heading);
+}
+
+.dp-menu-item .dp-icon {
+    font-size: 16px;
+    color: var(--dp-muted);
+}
+
+.dp-menu-separator {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--dp-border);
+}
+
+
+/* =====================================================
+   ANNOUNCEMENTS PANEL (HTML popover)
+===================================================== */
+
+.dp-panel[popover] {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(400px, 100%);
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    border: none;
+    border-left: 1px solid var(--dp-border);
+    background: var(--dp-surface);
+    color: var(--dp-text);
+    box-shadow: var(--dp-shadow-pop);
+    transform: translateX(100%);
+    transition:
+        transform .25s ease,
+        overlay .25s allow-discrete,
+        display .25s allow-discrete;
+}
+
+.dp-panel:popover-open {
+    display: flex;
+    transform: none;
+}
+
+/* slide-in on browsers that support it; others just appear */
+
+@starting-style {
+    .dp-panel:popover-open {
+        transform: translateX(100%);
+    }
+}
+
+.dp-panel::backdrop {
+    background: rgba(5, 20, 50, .35);
+}
+
+.dp-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 16px 16px 20px;
+    border-bottom: 1px solid var(--dp-border);
+}
+
+.dp-panel-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dp-heading);
+}
+
+.dp-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dp-notif-list {
+    flex: 1;
+    overflow-y: auto;
+    list-style: none;
+    padding: 8px;
+}
+
+.dp-notif-item {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    padding: 14px 32px 14px 12px;
+    border-radius: var(--dp-radius);
+}
+
+.dp-notif-item + .dp-notif-item {
+    border-top: 1px solid var(--dp-border);
+}
+
+.dp-notif-icon {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: var(--dp-link);
+    background: var(--dp-link-soft);
+    font-size: 16px;
+}
+
+.dp-notif-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.dp-notif-text strong {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--dp-heading);
+}
+
+.dp-notif-text span {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--dp-muted);
+}
+
+.dp-notif-text time {
+    font-size: 12px;
+    color: var(--dp-muted);
+}
+
+.dp-notif-item.is-unread .dp-notif-text strong {
+    font-weight: 700;
+}
+
+.dp-unread-dot {
+    position: absolute;
+    top: 20px;
+    right: 14px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dp-brand-blue);
+}
+
+.dp-notif-empty {
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--dp-muted);
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.dp-text-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: var(--dp-radius);
+    background: transparent;
+    color: var(--dp-link);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.dp-text-button:hover {
+    background: var(--dp-link-soft);
+}
+
+.dp-text-button .dp-icon {
+    font-size: 15px;
+}
+
+.dp-icon-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--dp-radius);
+    background: transparent;
+    color: var(--dp-muted);
+    font-size: 18px;
+}
+
+.dp-icon-button:hover {
+    background: var(--dp-hover);
+    color: var(--dp-heading);
+}
+
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.dp-main {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 32px 48px;
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.dp-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 168px;
+    display: flex;
+    align-items: center;
+    padding: 36px 40px;
+    border: 1px solid transparent;
+    border-radius: 24px;
+    background: var(--dp-surface);
+    box-shadow:
+        0 1px 2px rgba(16, 24, 40, .04),
+        0 14px 34px -14px rgba(16, 24, 40, .16);
+}
+
+body:has(#dpThemeSwitch:checked) .dp-hero {
+    border-color: var(--dp-border);
+    box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .6);
+}
+
+.dp-hero-text {
+    position: relative;
+    z-index: 1;
+    max-width: 540px;
+}
+
+.dp-greeting {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dp-link);
+}
+
+.dp-greeting-date {
+    font-weight: 400;
+    color: var(--dp-muted);
+}
+
+.dp-hero h1 {
+    margin-bottom: 6px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: var(--dp-heading);
+}
+
+.dp-hero-sub {
+    font-size: 15px;
+    color: var(--dp-muted);
+}
+
+
+/* FIBRE NETWORK ILLUSTRATION */
+
+.dp-hero-network {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 100%;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 40%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 40%);
+}
+
+.dp-hero-network .dp-route path {
+    fill: none;
+    stroke: var(--dp-net-line);
+    stroke-width: 1.5;
+}
+
+.dp-hero-network .dp-pulses path {
+    fill: none;
+    stroke: var(--dp-brand-blue);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 10 90;
+    animation: dp-flow 5s linear infinite;
+}
+
+.dp-hero-network .dp-pulses path:nth-child(2) { animation-delay: -1s;   animation-duration: 6s; }
+.dp-hero-network .dp-pulses path:nth-child(3) { animation-delay: -2.5s; }
+.dp-hero-network .dp-pulses path:nth-child(4) { animation-delay: -3.5s; animation-duration: 7s; }
+.dp-hero-network .dp-pulses path:nth-child(5) { animation-delay: -.5s;  animation-duration: 4.5s; }
+
+.dp-hero-network .dp-nodes circle {
+    fill: var(--dp-surface);
+    stroke: var(--dp-brand-blue);
+    stroke-width: 1.5;
+}
+
+.dp-hero-network .dp-nodes .dp-hub       { stroke: var(--dp-surface); stroke-width: 2; }
+.dp-hero-network .dp-nodes .dp-hub-red   { fill: var(--dp-brand-red); }
+.dp-hero-network .dp-nodes .dp-hub-navy  { fill: var(--dp-brand-navy); }
+.dp-hero-network .dp-nodes .dp-hub-green { fill: var(--dp-brand-green); }
+
+body:has(#dpThemeSwitch:checked) .dp-hero-network .dp-nodes .dp-hub-navy {
+    fill: var(--dp-brand-blue);
+}
+
+.dp-hero-network .dp-halos circle {
+    fill: var(--dp-brand-blue);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: dp-halo 3.6s ease-out infinite;
+}
+
+.dp-hero-network .dp-halos circle:nth-child(2) { animation-delay: 1.2s; }
+.dp-hero-network .dp-halos circle:nth-child(3) { animation-delay: 2.4s; }
+
+
+/* =====================================================
+   RECENT
+===================================================== */
+
+.dp-recent {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+}
+
+.dp-recent-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--dp-muted);
+}
+
+.dp-recent-label .dp-icon {
+    font-size: 15px;
+}
+
+.dp-recent-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dp-recent-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 4px 4px;
+    border: 1px solid var(--dp-border);
+    border-radius: 999px;
+    background: var(--dp-surface);
+    color: var(--dp-heading);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color .15s ease;
+}
+
+.dp-recent-chip:hover {
+    border-color: var(--dp-border-strong);
+}
+
+.dp-chip-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--dp-ink);
+    background: rgba(var(--dp-accent-rgb), var(--dp-tint));
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   APPLICATION HEADER
+===================================================== */
+
+.dp-application-header {
+    margin: 32px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dp-application-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dp-application-title h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dp-heading);
+}
+
+.dp-app-count {
+    font-size: 14px;
+    color: var(--dp-muted);
+}
+
+
+/* =====================================================
+   APPLICATION GRID
+===================================================== */
+
+.dp-applications {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+
+/* =====================================================
+   CARD (styled after the service cards on depl.co.in)
+===================================================== */
+
+.dp-app-card {
+    position: relative;
+    isolation: isolate;       /* keeps the tile's offset frame above the card */
+    min-width: 0;
+    min-height: 232px;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 30px 20px;
+    border: 1px solid transparent;
+    border-radius: 24px;
+    background: var(--dp-surface);
+    box-shadow:
+        0 1px 2px rgba(16, 24, 40, .04),
+        0 14px 34px -14px rgba(16, 24, 40, .16);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.dp-app-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 1px 2px rgba(16, 24, 40, .04),
+        0 24px 44px -18px rgba(var(--dp-accent-rgb), .4);
+}
+
+/* very faint mini fibre network in the top-right corner, in the card's
+   own colour: the SVG is a mask, and the card's accent is painted through it */
+
+.dp-app-card::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    width: 240px;
+    height: 120px;
+    border-top-right-radius: inherit;
+    background-color: var(--dp-ink);
+    opacity: .14;
+    -webkit-mask: var(--dp-card-net) top right / 240px 120px no-repeat;
+    mask: var(--dp-card-net) top right / 240px 120px no-repeat;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+
+.dp-app-card:hover::before {
+    opacity: .24;
+}
+
+body:has(#dpThemeSwitch:checked) .dp-app-card::before {
+    opacity: .1;
+}
+
+body:has(#dpThemeSwitch:checked) .dp-app-card:hover::before {
+    opacity: .18;
+}
+
+.dp-applications {
+    --dp-card-net: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M140 62Q175 58 205 85' stroke-opacity='.9'/%3E%3Cpath d='M140 62Q160 30 150 -5' stroke-opacity='.8'/%3E%3Cpath d='M205 85Q225 95 250 88' stroke-opacity='.8'/%3E%3Cpath d='M80 30Q110 60 140 62' stroke-opacity='.7'/%3E%3Cpath d='M205 85Q200 108 214 125' stroke-opacity='.5'/%3E%3Cpath d='M140 62Q150 92 128 125' stroke-opacity='.4'/%3E%3Cpath d='M80 30Q62 10 30 4' stroke-opacity='.35'/%3E%3Cpath d='M80 30Q70 70 38 92' stroke-opacity='.3'/%3E%3Ccircle cx='140' cy='62' r='11' fill='black' fill-opacity='.14' stroke='none'/%3E%3Ccircle cx='140' cy='62' r='4.5' fill='black' stroke='none'/%3E%3Ccircle cx='205' cy='85' r='3' fill='black' stroke='none'/%3E%3Ccircle cx='80' cy='30' r='3' fill='black' fill-opacity='.7' stroke='none'/%3E%3C/svg%3E");
+}
+
+body:has(#dpThemeSwitch:checked) .dp-app-card {
+    border-color: var(--dp-border);
+    box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .6);
+}
+
+
+/* ICON TILE: square gradient block with an offset outline frame */
+
+.dp-card-icon {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    /* blends toward DEPL blue; an app can set --dp-tile-end instead
+       (warm colours turn muddy when mixed with blue) */
+    background: linear-gradient(
+        135deg,
+        var(--dp-accent) 0%,
+        var(--dp-tile-end, color-mix(in srgb, var(--dp-accent) 55%, var(--dp-brand-blue))) 100%
+    );
+    font-size: 30px;
+}
+
+.dp-card-icon::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 8px -8px -8px 8px;
+    border: 1.5px solid rgba(var(--dp-accent-rgb), .6);
+    transition: transform .2s ease;
+}
+
+.dp-app-card:hover .dp-card-icon::after {
+    transform: translate(3px, 3px);
+}
+
+body:has(#dpThemeSwitch:checked) .dp-card-icon::after {
+    border-color: color-mix(in srgb, var(--dp-accent-dark) 60%, transparent);
+}
+
+
+/* TEXT */
+
+.dp-card-content h3 {
+    padding-right: 64px;  /* room for the pin + arrow */
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: var(--dp-heading);
+}
+
+/* short accent bar under the heading */
+
+.dp-card-content h3::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 2px;
+    margin: 10px 0 10px;
+    background: var(--dp-ink);
+}
+
+.dp-card-content p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--dp-muted);
+}
+
+
+/* META */
+
+.dp-card-meta {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--dp-muted);
+}
+
+.dp-status-dot {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dp-brand-green);
+}
+
+.dp-status-dot.is-muted {
+    background: var(--dp-border-strong);
+}
+
+
+/* LINK: its ::after stretches over the card, so the
+   whole card is clickable; the arrow is the visible part */
+
+.dp-card-link {
+    color: var(--dp-muted);
+}
+
+.dp-card-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.dp-card-arrow {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 16px;
+    opacity: .55;
+    transition: opacity .15s ease, color .15s ease, background-color .15s ease;
+}
+
+.dp-app-card:hover .dp-card-arrow {
+    opacity: 1;
+    color: var(--dp-ink);
+    background: rgba(var(--dp-accent-rgb), var(--dp-tint));
+}
+
+
+/* PIN: sits above the stretched link */
+
+.dp-card-pin {
+    position: absolute;
+    z-index: 2;
+    top: 18px;
+    right: 58px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: var(--dp-muted);
+    font-size: 15px;
+    opacity: 0;
+    transition: opacity .15s ease, color .15s ease, background-color .15s ease;
+}
+
+.dp-app-card:hover .dp-card-pin,
+.dp-card-pin:focus-visible {
+    opacity: .7;
+}
+
+.dp-card-pin:hover {
+    opacity: 1 !important;
+    background: var(--dp-hover);
+    color: var(--dp-heading);
+}
+
+.dp-app-card.is-pinned .dp-card-pin {
+    opacity: 1;
+    color: var(--dp-ink);
+    background: rgba(var(--dp-accent-rgb), var(--dp-tint));
+}
+
+/* touch screens have no hover, so keep pins visible */
+
+@media (hover: none) {
+    .dp-card-pin {
+        opacity: .6;
+    }
+}
+
+
+/* LOCKED (no access) */
+
+.dp-app-card.is-locked {
+    --dp-accent-rgb: 138, 147, 163;
+    --dp-accent: #8a93a3;
+    --dp-accent-dark: #8a93a3;
+}
+
+.dp-app-card.is-locked .dp-card-icon {
+    background: linear-gradient(135deg, #8a93a3, #b3bac6);
+}
+
+.dp-app-card.is-locked .dp-card-content {
+    opacity: .65;
+}
+
+
+/* =====================================================
+   EMPTY STATE (no active applications)
+===================================================== */
+
+.dp-empty-state {
+    grid-column: 1 / -1;
+    padding: 48px 16px;
+    border: 1px dashed var(--dp-border-strong);
+    border-radius: var(--dp-radius);
+    text-align: center;
+    color: var(--dp-muted);
+}
+
+.dp-empty-state strong {
+    font-weight: 500;
+    color: var(--dp-heading);
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.dp-footer {
+    border-top: 1px solid var(--dp-border);
+}
+
+.dp-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 18px 32px;
+    font-size: 12.5px;
+    color: var(--dp-muted);
+}
+
+
+/* =====================================================
+   APP ACCENTS
+   The class is the app's ID (PORTAL_APPS.APP_ID in APEX).
+   All drawn from the DEPL palette; red is kept for alerts.
+===================================================== */
+
+/* default for an app ID with no accent of its own
+   (must stay above the per-app rules, which override it) */
+
+.dp-app-card,
+.dp-recent-chip {
+    --dp-accent-rgb: 0, 128, 188;
+    --dp-accent: #0072a8;
+    --dp-accent-dark: #5bbbe8;
+}
+
+.finance       { --dp-accent-rgb: 0, 128, 188;  --dp-accent: #0072a8; --dp-accent-dark: #5bbbe8; }  /* brand blue   */
+.projects      { --dp-accent-rgb: 26, 166, 44;  --dp-accent: #178f27; --dp-accent-dark: #5fcf6d; }  /* logo green   */
+.order-book    { --dp-accent-rgb: 0, 128, 138;  --dp-accent: #00808a; --dp-accent-dark: #4cc2cb; }  /* site teal    */
+.opportunities { --dp-accent-rgb: 190, 42, 110; --dp-accent: #be2a6e; --dp-accent-dark: #ec7fb0; }  /* site magenta */
+.enterprise    { --dp-accent-rgb: 5, 49, 120;   --dp-accent: #053178; --dp-accent-dark: #8fa9e6; }  /* logo navy    */
+.archive       { --dp-accent-rgb: 87, 87, 86;   --dp-accent: #575756; --dp-accent-dark: #b5b5b3; }  /* site grey    */
+.reports       { --dp-accent-rgb: 180, 83, 9;   --dp-accent: #b45309; --dp-accent-dark: #f0a660; --dp-tile-end: #e08a1e; }  /* warm amber */
+
+.dp :is(.dp-app-card, .dp-recent-chip) {
+    --dp-ink: var(--dp-accent);
+}
+
+body:has(#dpThemeSwitch:checked) .dp :is(.dp-app-card, .dp-recent-chip) {
+    --dp-ink: var(--dp-accent-dark);
+}
+
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+@keyframes dp-flow {
+    from { stroke-dashoffset: 100; }
+    to   { stroke-dashoffset: 0; }
+}
+
+@keyframes dp-halo {
+    0%   { opacity: .35; transform: scale(.4); }
+    100% { opacity: 0;   transform: scale(1.8); }
+}
+
+
+/* ENTRANCE: the page builds itself on load, top to bottom.
+   "backwards" holds each element hidden during its delay and then
+   hands control back, so hover effects keep working afterwards. */
+
+@keyframes dp-rise {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+}
+
+@keyframes dp-draw {
+    from { width: 0; }
+}
+
+.dp-hero               { animation: dp-rise .6s cubic-bezier(.2, .8, .2, 1) backwards; }
+.dp-recent             { animation: dp-rise .5s cubic-bezier(.2, .8, .2, 1) .1s backwards; }
+.dp-application-header { animation: dp-rise .5s cubic-bezier(.2, .8, .2, 1) .15s backwards; }
+
+.dp-app-card {
+    --dp-delay: .6s;   /* cards after the 9th all arrive together */
+    animation: dp-rise .55s cubic-bezier(.2, .8, .2, 1) var(--dp-delay) backwards;
+}
+
+.dp-app-card:nth-child(1) { --dp-delay: .2s; }
+.dp-app-card:nth-child(2) { --dp-delay: .25s; }
+.dp-app-card:nth-child(3) { --dp-delay: .3s; }
+.dp-app-card:nth-child(4) { --dp-delay: .35s; }
+.dp-app-card:nth-child(5) { --dp-delay: .4s; }
+.dp-app-card:nth-child(6) { --dp-delay: .45s; }
+.dp-app-card:nth-child(7) { --dp-delay: .5s; }
+.dp-app-card:nth-child(8) { --dp-delay: .55s; }
+.dp-app-card:nth-child(9) { --dp-delay: .6s; }
+
+/* each card's underline draws in once the card has landed */
+
+.dp-card-content h3::after {
+    animation: dp-draw .5s ease-out calc(var(--dp-delay) + .3s) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dp,
+    .dp *,
+    .dp::before,
+    .dp::after,
+    .dp *::before,
+    .dp *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .dp-hero-network .dp-pulses {
+        display: none;
+    }
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .dp-applications {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =====================================================
+   SMALL TABLET
+===================================================== */
+
+@media (max-width: 760px) {
+
+    .dp-divider,
+    .dp-brand-tag {
+        display: none;
+    }
+
+    .dp-hero-network {
+        width: 100%;
+        opacity: .45;
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .dp-topbar {
+        padding: 0 16px;
+    }
+
+    .dp-brand-name strong {
+        font-size: 14px;
+    }
+
+    .dp-menu-panel[popover] {
+        right: 12px;
+    }
+
+    .dp-main {
+        padding: 20px 16px 36px;
+    }
+
+    .dp-hero {
+        min-height: 0;
+        padding: 24px 20px;
+        border-radius: 20px;
+    }
+
+    .dp-hero h1 {
+        font-size: 21px;
+    }
+
+    .dp-hero-sub {
+        font-size: 14px;
+    }
+
+    .dp-applications {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .dp-app-card {
+        min-height: 0;
+        padding: 22px 22px 20px;
+        border-radius: 20px;
+    }
+
+    .dp-footer-inner {
+        padding: 16px;
+    }
+}
+
+
+/* =====================================================
+   ICON SET (generated, do not edit by hand)
+   Lucide 1.48.0, ISC licence, https://lucide.dev
+===================================================== */
+
+.dp-i-archive { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Crect width='20' height='5' x='2' y='3' rx='1'/%3E%3Cpath d='M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8'/%3E%3Cpath d='M10 12h4'/%3E%3C/svg%3E"); }
+.dp-i-arrow-up-right { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M7 7h10v10'/%3E%3Cpath d='M7 17 17 7'/%3E%3C/svg%3E"); }
+.dp-i-bell { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M10.268 21a2 2 0 0 0 3.464 0'/%3E%3Cpath d='M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326'/%3E%3C/svg%3E"); }
+.dp-i-building-2 { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M10 12h4'/%3E%3Cpath d='M10 8h4'/%3E%3Cpath d='M14 21v-3a2 2 0 0 0-4 0v3'/%3E%3Cpath d='M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2'/%3E%3Cpath d='M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16'/%3E%3C/svg%3E"); }
+.dp-i-cable { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M17 19a1 1 0 0 1-1-1v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a1 1 0 0 1-1 1z'/%3E%3Cpath d='M17 21v-2'/%3E%3Cpath d='M19 14V6.5a1 1 0 0 0-7 0v11a1 1 0 0 1-7 0V10'/%3E%3Cpath d='M21 21v-2'/%3E%3Cpath d='M3 5V3'/%3E%3Cpath d='M4 10a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a2 2 0 0 1-2 2z'/%3E%3Cpath d='M7 5V3'/%3E%3C/svg%3E"); }
+.dp-i-check-check { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M18 6 7 17l-5-5'/%3E%3Cpath d='m22 10-7.5 7.5L13 16'/%3E%3C/svg%3E"); }
+.dp-i-clipboard-list { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='M12 11h4'/%3E%3Cpath d='M12 16h4'/%3E%3Cpath d='M8 11h.01'/%3E%3Cpath d='M8 16h.01'/%3E%3C/svg%3E"); }
+.dp-i-file-chart-column-increasing { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z'/%3E%3Cpath d='M14 2v5a1 1 0 0 0 1 1h5'/%3E%3Cpath d='M8 18v-2'/%3E%3Cpath d='M12 18v-4'/%3E%3Cpath d='M16 18v-6'/%3E%3C/svg%3E"); }
+.dp-i-handshake { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='m11 17 2 2a1 1 0 1 0 3-3'/%3E%3Cpath d='m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4'/%3E%3Cpath d='m21 3 1 11h-2'/%3E%3Cpath d='M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3'/%3E%3Cpath d='M3 4h8'/%3E%3C/svg%3E"); }
+.dp-i-history { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3Cpath d='M12 7v5l4 2'/%3E%3C/svg%3E"); }
+.dp-i-life-buoy { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m4.93 4.93 4.24 4.24'/%3E%3Cpath d='m14.83 9.17 4.24-4.24'/%3E%3Cpath d='m14.83 14.83 4.24 4.24'/%3E%3Cpath d='m9.17 14.83-4.24 4.24'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E"); }
+.dp-i-lock { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E"); }
+.dp-i-log-out { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='m16 17 5-5-5-5'/%3E%3Cpath d='M21 12H9'/%3E%3Cpath d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/%3E%3C/svg%3E"); }
+.dp-i-megaphone { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z'/%3E%3Cpath d='M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14'/%3E%3Cpath d='M8 6v8'/%3E%3C/svg%3E"); }
+.dp-i-moon { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401'/%3E%3C/svg%3E"); }
+.dp-i-pin { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M12 17v5'/%3E%3Cpath d='M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z'/%3E%3C/svg%3E"); }
+.dp-i-sun { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2'/%3E%3Cpath d='M12 20v2'/%3E%3Cpath d='m4.93 4.93 1.41 1.41'/%3E%3Cpath d='m17.66 17.66 1.41 1.41'/%3E%3Cpath d='M2 12h2'/%3E%3Cpath d='M20 12h2'/%3E%3Cpath d='m6.34 17.66-1.41 1.41'/%3E%3Cpath d='m19.07 4.93-1.41 1.41'/%3E%3C/svg%3E"); }
+.dp-i-user { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E"); }
+.dp-i-wallet { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1'/%3E%3Cpath d='M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'/%3E%3C/svg%3E"); }
+.dp-i-x { --dp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' %3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E"); }
