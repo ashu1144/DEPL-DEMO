@@ -5,7 +5,7 @@ How to view
 -----------
 1. Unzip this folder (right-click > Extract All). Opening the file
    from inside the zip will not load the styles and images.
-2. Double-click "DEPL Portal.html". It opens in your browser;
+2. Double-click "index.html". It opens in your browser;
    no internet connection or installation is needed.
 3. Use a current version of Edge or Chrome.
 
